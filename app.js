@@ -13,7 +13,8 @@ const cron = require('node-cron');
 const questionService = require('./services/questionService');
 const aiService = require('./services/aiService');
 const userService = require('./services/userService');
-
+const express = require("express");
+const webServer = express();
 // ============================================
 // INITIALIZE SLACK APP
 // ============================================
@@ -769,6 +770,15 @@ app.message(async ({ message, say }) => {
     process.exit(1);
   }
 })();
+const PORT = process.env.PORT || 3000;
+
+webServer.get("/", (req, res) => {
+  res.send("Interview Prep Bot is running");
+});
+
+webServer.listen(PORT, () => {
+  console.log(`Web server listening on port ${PORT}`);
+});
 
 // Export app for testing
 module.exports = { app };
