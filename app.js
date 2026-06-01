@@ -13,8 +13,10 @@ const cron = require('node-cron');
 const questionService = require('./services/questionService');
 const aiService = require('./services/aiService');
 const userService = require('./services/userService');
-const express = require("express");
-const webServer = express();
+const express = require('express');
+const webApp = express();
+webApp.use(express.static('public'));
+webApp.listen(8080, () => console.log('🌐 Dashboard running at http://localhost:8080'));
 // ============================================
 // INITIALIZE SLACK APP
 // ============================================
@@ -772,11 +774,11 @@ app.message(async ({ message, say }) => {
 })();
 const PORT = process.env.PORT || 3000;
 
-webServer.get("/", (req, res) => {
+webApp.get("/", (req, res) => {
   res.send("Interview Prep Bot is running");
 });
 
-webServer.listen(PORT, () => {
+webApp.listen(PORT, () => {
   console.log(`Web server listening on port ${PORT}`);
 });
 
