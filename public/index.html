@@ -1881,10 +1881,56 @@
       });
     </script>
   </body>
-  <script>
-    const SLACK_CLIENT_ID = "YOUR_CLIENT_ID_HERE";
-    const SLACK_REDIRECT_URI =
-      "https://your-render-url.onrender.com/slack/oauth/callback";
-  </script>
+<script>
+  const SLACK_CLIENT_ID = "11276402474048.11241741085715";
+  const SLACK_REDIRECT_URI = "https://interview-prep-bot-ye28.onrender.com/slack/oauth/callback";
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // Make "See Demo" and secondary buttons go to demo page
+    document.querySelectorAll('.btn-secondary').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '/demo.html';
+      });
+    });
+
+    document.querySelectorAll('a[href="#demo"]').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '/demo.html';
+      });
+    });
+
+    // Make "Add to Slack" buttons open real Slack OAuth
+    document.querySelectorAll('.btn-primary, .nav-cta').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const scope = 'app_mentions:read,chat:write,commands,im:write,im:read,users:read';
+        const redirectUri = encodeURIComponent(SLACK_REDIRECT_URI);
+        const url = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scope}&redirect_uri=${redirectUri}`;
+        window.open(url, '_blank');
+      });
+    });
+
+  });
+
+  function copyCommand() {
+    navigator.clipboard.writeText('/interview-prep');
+    const notif = document.getElementById('notification');
+    notif.style.display = 'flex';
+    setTimeout(() => { notif.style.display = 'none'; }, 3000);
+  }
+
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(15, 15, 26, 0.98)';
+    } else {
+      nav.style.background = 'rgba(15, 15, 26, 0.9)';
+    }
+  });
+</script>
+</html>
   <script src="script.js"></script>
 </html>

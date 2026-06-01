@@ -1,0 +1,2082 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Demo - Interview Prep Bot</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #6c63ff;
+        --secondary: #ff6584;
+        --accent: #43e97b;
+        --dark: #0f0f1a;
+        --dark-2: #1a1a2e;
+        --dark-3: #16213e;
+        --card: #1e1e35;
+        --border: #2a2a45;
+        --text: #e8e8f0;
+        --text-muted: #8888aa;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--dark);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* TOP BAR */
+      .topbar {
+        background: var(--dark-2);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .back-btn {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+      }
+
+      .back-btn:hover {
+        color: var(--text);
+      }
+
+      .demo-badge {
+        background: rgba(67, 233, 123, 0.15);
+        border: 1px solid rgba(67, 233, 123, 0.3);
+        color: var(--accent);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .add-slack-btn {
+        background: #4a154b;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+
+      .add-slack-btn:hover {
+        background: #611f69;
+        transform: translateY(-1px);
+      }
+
+      /* MAIN LAYOUT */
+      .main {
+        display: grid;
+        grid-template-columns: 280px 1fr 320px;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* LEFT SIDEBAR */
+      .sidebar {
+        background: var(--dark-2);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+      }
+
+      .company-select {
+        width: 100%;
+        background: var(--dark-3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: "Inter", sans-serif;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      .company-select:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .sidebar-questions {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+      }
+
+      .sidebar-questions::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .sidebar-questions::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .sidebar-questions::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+
+      .question-item {
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+
+      .question-item:hover {
+        background: var(--card);
+        border-color: var(--border);
+      }
+
+      .question-item.active {
+        background: rgba(108, 99, 255, 0.15);
+        border-color: rgba(108, 99, 255, 0.4);
+      }
+
+      .question-item-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .question-item-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .difficulty-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+
+      .easy {
+        background: rgba(67, 233, 123, 0.15);
+        color: #43e97b;
+      }
+      .medium {
+        background: rgba(247, 183, 49, 0.15);
+        color: #f7b731;
+      }
+      .hard {
+        background: rgba(255, 101, 132, 0.15);
+        color: #ff6584;
+      }
+
+      .question-status {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      /* CHAT AREA */
+      .chat-area {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--dark);
+      }
+
+      .chat-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .chat-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .bot-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #6c63ff, #ff6584);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .bot-name {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .bot-status {
+        font-size: 12px;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 4px;
+      }
+      .chat-messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+
+      /* MESSAGES */
+      .message {
+        display: flex;
+        gap: 12px;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.user {
+        flex-direction: row-reverse;
+      }
+
+      .msg-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .bot-msg-avatar {
+        background: linear-gradient(135deg, #6c63ff, #ff6584);
+      }
+
+      .user-msg-avatar {
+        background: linear-gradient(135deg, #fa8231, #f7b731);
+      }
+
+      .msg-content {
+        max-width: 75%;
+      }
+
+      .msg-name {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .message.user .msg-name {
+        text-align: right;
+      }
+
+      .msg-bubble {
+        padding: 14px 18px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .bot-bubble {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-top-left-radius: 4px;
+      }
+
+      .user-bubble {
+        background: linear-gradient(135deg, #6c63ff, #8b85ff);
+        color: white;
+        border-top-right-radius: 4px;
+      }
+
+      /* QUESTION CARD */
+      .question-card {
+        background: var(--dark-3);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 10px;
+      }
+
+      .question-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+
+      .question-card-desc {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
+
+      .question-card-example {
+        background: var(--dark);
+        border-radius: 8px;
+        padding: 12px;
+        font-family: monospace;
+        font-size: 12px;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+
+      .question-card-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+
+      .tag {
+        background: rgba(108, 99, 255, 0.15);
+        color: #a8a3ff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+
+      .card-btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .card-btn-primary:hover {
+        background: #5a52d5;
+        transform: translateY(-1px);
+      }
+
+      .card-btn-secondary {
+        background: var(--dark);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .card-btn-secondary:hover {
+        border-color: var(--primary);
+        background: rgba(108, 99, 255, 0.1);
+      }
+
+      /* FEEDBACK CARD */
+      .feedback-card {
+        background: var(--dark-3);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 10px;
+      }
+
+      .score-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .score-badge {
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .score-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .score-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #43e97b, #38f9d7);
+        border-radius: 4px;
+        transition: width 1s ease;
+      }
+
+      .feedback-section {
+        margin-bottom: 14px;
+      }
+
+      .feedback-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+
+      .feedback-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        line-height: 1.5;
+      }
+
+      .feedback-item i {
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .feedback-item.good i {
+        color: var(--accent);
+      }
+      .feedback-item.bad i {
+        color: var(--secondary);
+      }
+
+      .code-block {
+        background: var(--dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        color: #a8a3ff;
+        overflow-x: auto;
+        white-space: pre;
+        margin-top: 8px;
+      }
+
+      .complexity-row {
+        display: flex;
+        gap: 16px;
+        margin-top: 12px;
+      }
+
+      .complexity-item {
+        flex: 1;
+        background: var(--dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+      }
+
+      .complexity-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+      }
+
+      .complexity-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: monospace;
+      }
+
+      /* CODE EDITOR */
+      .code-editor-container {
+        background: var(--dark-3);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .editor-header {
+        background: var(--dark-2);
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .editor-tabs {
+        display: flex;
+        gap: 4px;
+      }
+
+      .editor-tab {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-muted);
+      }
+
+      .editor-tab.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .editor-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .run-btn {
+        background: var(--accent);
+        color: #0f0f1a;
+        border: none;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+        transition: all 0.2s;
+      }
+
+      .run-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
+      }
+
+      .code-textarea {
+        width: 100%;
+        background: var(--dark-3);
+        border: none;
+        color: #a8a3ff;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        padding: 16px;
+        resize: none;
+        outline: none;
+        line-height: 1.8;
+        min-height: 160px;
+      }
+
+      /* TYPING INDICATOR */
+      .typing-indicator {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+        padding: 14px 18px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        border-top-left-radius: 4px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--text-muted);
+        border-radius: 50%;
+        animation: bounce 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-8px);
+        }
+      }
+
+      /* CHAT INPUT */
+      .chat-input-area {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .chat-input-box {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: border-color 0.2s;
+      }
+
+      .chat-input-box:focus-within {
+        border-color: var(--primary);
+      }
+
+      .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        font-size: 14px;
+        font-family: "Inter", sans-serif;
+        outline: none;
+      }
+
+      .chat-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .send-btn {
+        background: var(--primary);
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        font-size: 14px;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+
+      .send-btn:hover {
+        background: #5a52d5;
+        transform: scale(1.05);
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+
+      .quick-btn {
+        background: var(--dark-3);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+
+      .quick-btn:hover {
+        border-color: var(--primary);
+        color: var(--text);
+        background: rgba(108, 99, 255, 0.1);
+      }
+
+      /* RIGHT PANEL */
+      .right-panel {
+        background: var(--dark-2);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+      }
+
+      .panel-body::-webkit-scrollbar {
+        width: 4px;
+      }
+      .panel-body::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+
+      /* PROGRESS */
+      .progress-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .progress-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .progress-bar-container {
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 1s ease;
+      }
+
+      .progress-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+      }
+
+      .stat-num {
+        font-size: 24px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #6c63ff, #ff6584);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-lbl {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .topic-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .topic-name {
+        font-size: 12px;
+        width: 80px;
+        color: var(--text-muted);
+      }
+
+      .topic-bar {
+        flex: 1;
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .topic-fill {
+        height: 100%;
+        border-radius: 3px;
+      }
+
+      .topic-pct {
+        font-size: 12px;
+        color: var(--text-muted);
+        width: 32px;
+        text-align: right;
+      }
+
+      .achievement {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 8px;
+      }
+
+      .achievement-icon {
+        font-size: 20px;
+      }
+
+      .achievement-text {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .achievement-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      @media (max-width: 900px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+        .sidebar,
+        .right-panel {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          Back to Home
+        </a>
+        <div class="demo-badge">
+          <div class="live-dot"></div>
+          Live Demo
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span style="font-size: 13px; color: var(--text-muted)"
+          >Like what you see?</span
+        >
+        <button class="add-slack-btn" onclick="addToSlack()">
+          <i class="fab fa-slack"></i>
+          Add to Slack
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <!-- LEFT SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Your Prep Plan</div>
+          <select class="company-select" onchange="changeCompany(this.value)">
+            <option value="google">🎯 Google</option>
+            <option value="meta">📘 Meta</option>
+            <option value="amazon">📦 Amazon</option>
+            <option value="netflix">🎬 Netflix</option>
+            <option value="apple">🍎 Apple</option>
+            <option value="microsoft">🪟 Microsoft</option>
+          </select>
+          <select class="company-select" onchange="changeRole(this.value)">
+            <option value="frontend">Frontend Engineer</option>
+            <option value="backend">Backend Engineer</option>
+            <option value="fullstack">Full Stack</option>
+          </select>
+        </div>
+        <div class="sidebar-questions" id="questionList"></div>
+      </div>
+
+      <!-- CHAT AREA -->
+      <div class="chat-area">
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <div class="bot-icon">🎯</div>
+            <div>
+              <div class="bot-name">Interview Prep Bot</div>
+              <div class="bot-status">
+                <div class="live-dot"></div>
+                Online & Ready
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button
+              class="card-btn card-btn-secondary"
+              onclick="resetChat()"
+              style="font-size: 12px; padding: 6px 14px"
+            >
+              <i class="fas fa-refresh"></i> Reset
+            </button>
+            <button
+              class="card-btn card-btn-secondary"
+              onclick="nextQuestion()"
+              style="font-size: 12px; padding: 6px 14px"
+            >
+              Next Question ➡️
+            </button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-area">
+          <div class="quick-actions" id="quickActions">
+            <button
+              class="quick-btn"
+              onclick="quickSend('I am ready to start!')"
+            >
+              🚀 Start Practicing
+            </button>
+            <button class="quick-btn" onclick="quickSend('Give me a hint')">
+              💡 Get Hint
+            </button>
+            <button class="quick-btn" onclick="quickSend('Show me the answer')">
+              ✅ Show Answer
+            </button>
+            <button
+              class="quick-btn"
+              onclick="quickSend('Next question please')"
+            >
+              ⏭️ Skip
+            </button>
+          </div>
+          <div class="chat-input-box">
+            <input
+              class="chat-input"
+              id="chatInput"
+              placeholder="Type your message or paste your code solution..."
+              onkeypress="handleKeyPress(event)"
+            />
+            <button class="send-btn" onclick="sendMessage()">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <div class="panel-header">📊 Your Progress</div>
+        <div class="panel-body">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-num" id="solvedCount">0</div>
+              <div class="stat-lbl">Solved</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="avgScore">—</div>
+              <div class="stat-lbl">Avg Score</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="streak">1</div>
+              <div class="stat-lbl">Day Streak</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="successRate">—</div>
+              <div class="stat-lbl">Success %</div>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div class="progress-title">
+              <span>Overall Progress</span>
+              <span id="progressPct" style="color: var(--primary)">0%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div
+                class="progress-bar-fill"
+                id="overallBar"
+                style="
+                  width: 0%;
+                  background: linear-gradient(90deg, #6c63ff, #ff6584);
+                "
+              ></div>
+            </div>
+            <div class="progress-label">
+              <span id="progressLabel">0 of 10 questions</span>
+              <span style="color: var(--accent)">Keep going!</span>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div class="progress-title">Topics</div>
+            <div class="topic-row">
+              <span class="topic-name">Arrays</span>
+              <div class="topic-bar">
+                <div
+                  class="topic-fill"
+                  id="topicArrays"
+                  style="width: 70%; background: #6c63ff"
+                ></div>
+              </div>
+              <span class="topic-pct">70%</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">Strings</span>
+              <div class="topic-bar">
+                <div
+                  class="topic-fill"
+                  id="topicStrings"
+                  style="width: 50%; background: #ff6584"
+                ></div>
+              </div>
+              <span class="topic-pct">50%</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">Trees</span>
+              <div class="topic-bar">
+                <div
+                  class="topic-fill"
+                  id="topicTrees"
+                  style="width: 30%; background: #43e97b"
+                ></div>
+              </div>
+              <span class="topic-pct">30%</span>
+            </div>
+            <div class="topic-row">
+              <span class="topic-name">DP</span>
+              <div class="topic-bar">
+                <div
+                  class="topic-fill"
+                  id="topicDP"
+                  style="width: 20%; background: #f7b731"
+                ></div>
+              </div>
+              <span class="topic-pct">20%</span>
+            </div>
+          </div>
+
+          <div
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-muted);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin-bottom: 12px;
+            "
+          >
+            Achievements
+          </div>
+          <div class="achievement">
+            <div class="achievement-icon">🔥</div>
+            <div>
+              <div class="achievement-text">First Question</div>
+              <div class="achievement-sub">Solved your first problem</div>
+            </div>
+          </div>
+          <div class="achievement" id="streakAchievement" style="opacity: 0.4">
+            <div class="achievement-icon">⚡</div>
+            <div>
+              <div class="achievement-text">On Fire</div>
+              <div class="achievement-sub">Score 9+ three times</div>
+            </div>
+          </div>
+          <div class="achievement" id="speedAchievement" style="opacity: 0.4">
+            <div class="achievement-icon">🏆</div>
+            <div>
+              <div class="achievement-text">Speed Coder</div>
+              <div class="achievement-sub">Submit in under 5 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // =============================================
+      // DATA
+      // =============================================
+
+      const questions = {
+        google: {
+          frontend: [
+            {
+              id: 1,
+              title: "Implement Debounce",
+              difficulty: "medium",
+              category: "JavaScript",
+              description:
+                "Implement a debounce function that delays invoking a function until after 'wait' milliseconds have elapsed since the last time it was called. This is used heavily in search inputs and resize handlers.",
+              example:
+                "Input: func, wait = 300\nOutput: debounced function\n\ndebouncedSearch('hello') // waits 300ms before calling",
+              tags: ["Functions", "Closures", "Timers"],
+              hint: "Use setTimeout and clearTimeout. The key is clearing the previous timeout each time the function is called before it has fired.",
+              solution: `function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
+}`,
+              timeComplexity: "O(1)",
+              spaceComplexity: "O(1)",
+              feedback: {
+                good: [
+                  "Great use of closures",
+                  "Correct clearTimeout usage",
+                  "Handles multiple calls properly",
+                ],
+                improve: [
+                  "Consider adding immediate execution option",
+                  "Handle edge case of wait = 0",
+                ],
+              },
+            },
+            {
+              id: 2,
+              title: "Flatten Nested Array",
+              difficulty: "easy",
+              category: "Arrays",
+              description:
+                "Write a function that flattens a nested array to any specified depth. The function should work recursively and handle arrays nested to any level.",
+              example:
+                "Input: [1, [2, [3, [4]]]], depth = Infinity\nOutput: [1, 2, 3, 4]\n\nInput: [1, [2, [3]]], depth = 1\nOutput: [1, 2, [3]]",
+              tags: ["Arrays", "Recursion", "ES6"],
+              hint: "You can use Array.prototype.reduce with concat and recursion, or simply use the built-in Array.prototype.flat method.",
+              solution: `function flatten(arr, depth = Infinity) {
+  return depth > 0
+    ? arr.reduce((acc, val) =>
+        acc.concat(Array.isArray(val)
+          ? flatten(val, depth - 1)
+          : val), [])
+    : arr.slice();
+}`,
+              timeComplexity: "O(n)",
+              spaceComplexity: "O(n)",
+              feedback: {
+                good: [
+                  "Correct recursive approach",
+                  "Handles depth parameter",
+                  "Clean reduce usage",
+                ],
+                improve: [
+                  "Consider using flat() for simplicity",
+                  "Add input validation",
+                ],
+              },
+            },
+            {
+              id: 3,
+              title: "Implement Promise.all",
+              difficulty: "hard",
+              category: "Promises",
+              description:
+                "Implement your own Promise.all() function from scratch. It should take an array of promises and return a single promise that resolves when ALL input promises resolve, or rejects as soon as any one of them rejects.",
+              example:
+                "Input: [Promise.resolve(1), Promise.resolve(2)]\nOutput: Promise([1, 2])\n\nInput: [Promise.resolve(1), Promise.reject('error')]\nOutput: Promise.reject('error')",
+              tags: ["Promises", "Async", "ES6"],
+              hint: "Track how many promises have resolved using a counter. When counter equals the input array length, resolve the outer promise. Use forEach to attach .then and .catch to each promise.",
+              solution: `function promiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    let count = 0;
+    
+    if (promises.length === 0) {
+      resolve(results);
+      return;
+    }
+    
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then(value => {
+          results[index] = value;
+          count++;
+          if (count === promises.length) {
+            resolve(results);
+          }
+        })
+        .catch(reject);
+    });
+  });
+}`,
+              timeComplexity: "O(n)",
+              spaceComplexity: "O(n)",
+              feedback: {
+                good: [
+                  "Handles empty array edge case",
+                  "Preserves order of results",
+                  "Correctly rejects on first failure",
+                ],
+                improve: [
+                  "Consider adding timeout support",
+                  "Handle non-promise values",
+                ],
+              },
+            },
+          ],
+        },
+        meta: {
+          frontend: [
+            {
+              id: 4,
+              title: "Two Sum",
+              difficulty: "easy",
+              category: "Arrays",
+              description:
+                "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution.",
+              example:
+                "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\n\nInput: nums = [3,2,4], target = 6\nOutput: [1,2]",
+              tags: ["Arrays", "HashMap", "Searching"],
+              hint: "Use a hash map to store each number and its index as you iterate. For each number, check if (target - number) already exists in the map.",
+              solution: `function twoSum(nums, target) {
+  const map = new Map();
+  
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    
+    if (map.has(complement)) {
+      return [map.get(complement), i];
+    }
+    
+    map.set(nums[i], i);
+  }
+  
+  return [];
+}`,
+              timeComplexity: "O(n)",
+              spaceComplexity: "O(n)",
+              feedback: {
+                good: [
+                  "Optimal O(n) solution",
+                  "Correct HashMap usage",
+                  "Handles all edge cases",
+                ],
+                improve: [
+                  "Consider what happens with duplicate numbers",
+                  "Add input validation for null/empty arrays",
+                ],
+              },
+            },
+          ],
+        },
+      };
+
+      // =============================================
+      // STATE
+      // =============================================
+
+      let state = {
+        company: "google",
+        role: "frontend",
+        currentQuestionIndex: 0,
+        solved: 0,
+        scores: [],
+        phase: "welcome",
+        currentQuestion: null,
+      };
+
+      // =============================================
+      // GET QUESTIONS
+      // =============================================
+
+      function getQuestions() {
+        const companyData = questions[state.company] || questions.google;
+        return (
+          companyData[state.role] ||
+          companyData.frontend ||
+          questions.google.frontend
+        );
+      }
+
+      // =============================================
+      // RENDER QUESTION LIST
+      // =============================================
+
+      function renderQuestionList() {
+        const qs = getQuestions();
+        const list = document.getElementById("questionList");
+        list.innerHTML = "";
+
+        qs.forEach((q, i) => {
+          const item = document.createElement("div");
+          item.className = `question-item ${i === state.currentQuestionIndex ? "active" : ""}`;
+          item.onclick = () => loadQuestion(i);
+          item.innerHTML = `
+            <div class="question-item-title">${q.title}</div>
+            <div class="question-item-meta">
+                <span class="difficulty-badge ${q.difficulty}">${q.difficulty}</span>
+                <span class="question-status">${i < state.solved ? "✅ Solved" : i === state.currentQuestionIndex ? "📝 Current" : "⏳ Pending"}</span>
+            </div>
+        `;
+          list.appendChild(item);
+        });
+      }
+
+      // =============================================
+      // ADD MESSAGE TO CHAT
+      // =============================================
+
+      function addMessage(who, content, isHTML = false) {
+        const messages = document.getElementById("chatMessages");
+
+        const div = document.createElement("div");
+        div.className = `message ${who}`;
+
+        const isBot = who === "bot";
+
+        div.innerHTML = `
+        <div class="msg-avatar ${isBot ? "bot-msg-avatar" : "user-msg-avatar"}">
+            ${isBot ? "🎯" : "👤"}
+        </div>
+        <div class="msg-content">
+            <div class="msg-name">${isBot ? "Interview Prep Bot" : "You"}</div>
+            <div class="msg-bubble ${isBot ? "bot-bubble" : "user-bubble"}">
+                ${isHTML ? content : escapeHTML(content)}
+            </div>
+        </div>
+    `;
+
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function escapeHTML(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      // =============================================
+      // TYPING INDICATOR
+      // =============================================
+
+      function showTyping() {
+        const messages = document.getElementById("chatMessages");
+        const div = document.createElement("div");
+        div.className = "message bot typing-indicator";
+        div.id = "typingIndicator";
+        div.innerHTML = `
+        <div class="msg-avatar bot-msg-avatar">🎯</div>
+        <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function hideTyping() {
+        const el = document.getElementById("typingIndicator");
+        if (el) el.remove();
+      }
+
+      // =============================================
+      // BOT RESPOND
+      // =============================================
+
+      function botRespond(contentFn, delay = 1200) {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          contentFn();
+        }, delay);
+      }
+
+      // =============================================
+      // WELCOME MESSAGE
+      // =============================================
+
+      function showWelcome() {
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `
+            <div>
+                👋 <strong>Welcome to Interview Prep Bot!</strong><br><br>
+                I'm your personal AI interview coach. I'll ask you real coding questions from top companies and give you detailed feedback on your solutions.<br><br>
+                🎯 <strong>Current Setup:</strong><br>
+                • Company: <strong>Google</strong><br>
+                • Role: <strong>Frontend Engineer</strong><br>
+                • Questions: <strong>3 ready for you</strong><br><br>
+                Ready to start? Click <strong>"Start Practicing"</strong> below or type anything to begin!
+            </div>
+        `,
+            true,
+          );
+        }, 600);
+      }
+
+      // =============================================
+      // LOAD QUESTION
+      // =============================================
+
+      function loadQuestion(index) {
+        const qs = getQuestions();
+        if (index >= qs.length) {
+          showCompletion();
+          return;
+        }
+
+        state.currentQuestionIndex = index;
+        state.currentQuestion = qs[index];
+        state.phase = "question";
+        renderQuestionList();
+
+        botRespond(() => {
+          const q = state.currentQuestion;
+          addMessage(
+            "bot",
+            `
+            <div class="question-card">
+                <div class="question-card-title">
+                    📝 Question ${index + 1} of ${qs.length} — ${q.title}
+                </div>
+                <div class="question-card-desc">${q.description}</div>
+                <div class="question-card-example">${q.example}</div>
+                <div class="question-card-tags">
+                    <span class="difficulty-badge ${q.difficulty}">${q.difficulty}</span>
+                    ${q.tags.map((t) => `<span class="tag">${t}</span>`).join("")}
+                </div>
+                <div class="card-actions">
+                    <button class="card-btn card-btn-primary" onclick="openCodeEditor()">💻 Write Solution</button>
+                    <button class="card-btn card-btn-secondary" onclick="getHint()">💡 Get Hint</button>
+                    <button class="card-btn card-btn-secondary" onclick="skipQuestion()">⏭️ Skip</button>
+                </div>
+            </div>
+        `,
+            true,
+          );
+        });
+      }
+
+      // =============================================
+      // CODE EDITOR
+      // =============================================
+
+      function openCodeEditor() {
+        state.phase = "coding";
+        const q = state.currentQuestion;
+
+        addMessage(
+          "bot",
+          `
+        <div>Great! Write your solution below. Take your time — think about edge cases and time complexity. 💪</div>
+        <div class="code-editor-container" style="margin-top: 12px;">
+            <div class="editor-header">
+                <div class="editor-tabs">
+                    <div class="editor-tab active">JavaScript</div>
+                    <div class="editor-tab" onclick="this.parentElement.querySelectorAll('.editor-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active')">Python</div>
+                </div>
+                <div class="editor-actions">
+                    <button class="run-btn" onclick="submitCode()">
+                        <i class="fas fa-play"></i> Submit
+                    </button>
+                </div>
+            </div>
+            <textarea
+                class="code-textarea"
+                id="codeEditor"
+                placeholder="// Write your solution here...
+function ${q.title.toLowerCase().replace(/\s+/g, "")}(input) {
+  // Your code here
+  
+}"
+            ></textarea>
+        </div>
+    `,
+          true,
+        );
+
+        setTimeout(() => {
+          document.getElementById("codeEditor") &&
+            document.getElementById("codeEditor").focus();
+        }, 100);
+      }
+
+      // =============================================
+      // SUBMIT CODE
+      // =============================================
+
+      function submitCode() {
+        const code = document.getElementById("codeEditor")
+          ? document.getElementById("codeEditor").value
+          : "";
+
+        if (!code.trim() || code.includes("// Your code here")) {
+          addMessage("user", "(Submitted solution)");
+        } else {
+          addMessage("user", code);
+        }
+
+        evaluateAndFeedback(code);
+      }
+
+      // =============================================
+      // EVALUATE + FEEDBACK
+      // =============================================
+
+      function evaluateAndFeedback(code) {
+        const q = state.currentQuestion;
+
+        const hasCode = code.trim().length > 30;
+        const usesModern =
+          code.includes("=>") || code.includes("const") || code.includes("let");
+        const hasReturn = code.includes("return");
+        const hasComment = code.includes("//");
+
+        let score = 5;
+        if (hasCode) score += 1;
+        if (usesModern) score += 1;
+        if (hasReturn) score += 1;
+        if (hasComment) score += 1;
+        if (code.length > 100) score += 1;
+        score = Math.min(score, 10);
+
+        state.scores.push(score);
+        state.solved++;
+        updateProgress();
+
+        botRespond(() => {
+          const pct = score * 10;
+          addMessage(
+            "bot",
+            `
+            <div class="feedback-card">
+                <div class="score-row">
+                    <div class="score-badge">${score}/10 ${score >= 9 ? "🔥" : score >= 7 ? "👍" : "💪"}</div>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: ${pct}%"></div>
+                    </div>
+                </div>
+
+                <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+                    ${score >= 9 ? "Excellent work! Your solution demonstrates strong problem-solving skills." : score >= 7 ? "Good job! The approach is solid with a few things to improve." : "Nice effort! Review the optimal solution below to level up."}
+                </div>
+
+                <div class="feedback-section">
+                    <div class="feedback-label">✅ What you did well</div>
+                    ${q.feedback.good.map((g) => `<div class="feedback-item good"><i class="fas fa-check-circle"></i> ${g}</div>`).join("")}
+                </div>
+
+                <div class="feedback-section">
+                    <div class="feedback-label">⚠️ Areas to improve</div>
+                    ${q.feedback.improve.map((i) => `<div class="feedback-item bad"><i class="fas fa-exclamation-circle"></i> ${i}</div>`).join("")}
+                </div>
+
+                <div class="feedback-section">
+                    <div class="feedback-label">💡 Optimal Solution</div>
+                    <div class="code-block">${escapeHTML(q.solution)}</div>
+                </div>
+
+                <div class="complexity-row">
+                    <div class="complexity-item">
+                        <div class="complexity-label">Time Complexity</div>
+                        <div class="complexity-value">${q.timeComplexity}</div>
+                    </div>
+                    <div class="complexity-item">
+                        <div class="complexity-label">Space Complexity</div>
+                        <div class="complexity-value">${q.spaceComplexity}</div>
+                    </div>
+                </div>
+
+                <div class="card-actions" style="margin-top: 16px;">
+                    <button class="card-btn card-btn-primary" onclick="nextQuestion()">➡️ Next Question</button>
+                    <button class="card-btn card-btn-secondary" onclick="loadQuestion(${state.currentQuestionIndex})">🔄 Retry</button>
+                </div>
+            </div>
+        `,
+            true,
+          );
+
+          if (score >= 9) {
+            document.getElementById("streakAchievement").style.opacity = "1";
+          }
+        }, 2000);
+      }
+
+      // =============================================
+      // HINT
+      // =============================================
+
+      function getHint() {
+        const q = state.currentQuestion;
+        if (!q) return;
+
+        addMessage("user", "Give me a hint 💡");
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `
+            <div>
+                💡 <strong>Hint for "${q.title}":</strong><br><br>
+                ${q.hint}<br><br>
+                Still stuck? Click <strong>Write Solution</strong> and give it a go — you've got this!
+            </div>
+        `,
+            true,
+          );
+        });
+      }
+
+      // =============================================
+      // SKIP
+      // =============================================
+
+      function skipQuestion() {
+        addMessage("user", "Skip this question ⏭️");
+        botRespond(() => {
+          addMessage("bot", `No problem! Moving to the next question...`);
+          setTimeout(() => nextQuestion(), 800);
+        }, 600);
+      }
+
+      // =============================================
+      // NEXT QUESTION
+      // =============================================
+
+      function nextQuestion() {
+        const qs = getQuestions();
+        const next = state.currentQuestionIndex + 1;
+        if (next >= qs.length) {
+          showCompletion();
+        } else {
+          loadQuestion(next);
+        }
+      }
+
+      // =============================================
+      // COMPLETION
+      // =============================================
+
+      function showCompletion() {
+        state.phase = "complete";
+        const avg =
+          state.scores.length > 0
+            ? (
+                state.scores.reduce((a, b) => a + b, 0) / state.scores.length
+              ).toFixed(1)
+            : 0;
+
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `
+            <div style="text-align: center; padding: 8px;">
+                <div style="font-size: 40px; margin-bottom: 12px;">🏆</div>
+                <div style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Session Complete!</div>
+                <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+                    You completed all questions in this session.
+                </div>
+                <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 800; color: #6C63FF;">${state.solved}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Solved</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 800; color: #43E97B;">${avg}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Avg Score</div>
+                    </div>
+                </div>
+                <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
+                    Want to practice more? Add the bot to your Slack and access 500+ questions!
+                </div>
+                <button class="card-btn card-btn-primary" onclick="addToSlack()" style="width: 100%; justify-content: center; display: flex;">
+                    <i class="fab fa-slack" style="margin-right: 8px;"></i> Add to Slack — Free
+                </button>
+            </div>
+        `,
+            true,
+          );
+        });
+      }
+
+      // =============================================
+      // HANDLE TEXT INPUT
+      // =============================================
+
+      function handleInput(text) {
+        const lower = text.toLowerCase();
+
+        if (
+          state.phase === "welcome" ||
+          lower.includes("start") ||
+          lower.includes("ready") ||
+          lower.includes("begin")
+        ) {
+          loadQuestion(0);
+          return;
+        }
+
+        if (lower.includes("hint")) {
+          getHint();
+          return;
+        }
+
+        if (lower.includes("skip") || lower.includes("next")) {
+          skipQuestion();
+          return;
+        }
+
+        if (
+          lower.includes("answer") ||
+          lower.includes("solution") ||
+          lower.includes("show")
+        ) {
+          if (state.currentQuestion) {
+            botRespond(() => {
+              addMessage(
+                "bot",
+                `
+                    <div>
+                        Here's the optimal solution for <strong>${state.currentQuestion.title}</strong>:<br><br>
+                        <div class="code-block">${escapeHTML(state.currentQuestion.solution)}</div><br>
+                        Try to understand the approach before moving on. Ready for the next question?
+                    </div>
+                `,
+                true,
+              );
+            });
+          }
+          return;
+        }
+
+        if (
+          lower.includes("progress") ||
+          lower.includes("score") ||
+          lower.includes("how am i")
+        ) {
+          showProgress();
+          return;
+        }
+
+        if (state.phase === "question" || state.phase === "welcome") {
+          botRespond(() => {
+            addMessage(
+              "bot",
+              `
+                <div>
+                    I see you typed: "<em>${text}</em>"<br><br>
+                    Want to:
+                    <div class="card-actions" style="margin-top: 12px;">
+                        <button class="card-btn card-btn-primary" onclick="openCodeEditor()">💻 Write Solution</button>
+                        <button class="card-btn card-btn-secondary" onclick="getHint()">💡 Get Hint</button>
+                    </div>
+                </div>
+            `,
+              true,
+            );
+          });
+          return;
+        }
+
+        if (state.phase === "coding") {
+          addMessage("user", text);
+          evaluateAndFeedback(text);
+          return;
+        }
+
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `Got it! Type <strong>"start"</strong> to begin, <strong>"hint"</strong> for a hint, or <strong>"next"</strong> to skip.`,
+            true,
+          );
+        }, 800);
+      }
+
+      // =============================================
+      // SHOW PROGRESS
+      // =============================================
+
+      function showProgress() {
+        const avg =
+          state.scores.length > 0
+            ? (
+                state.scores.reduce((a, b) => a + b, 0) / state.scores.length
+              ).toFixed(1)
+            : "N/A";
+
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `
+            <div>
+                📊 <strong>Your Progress So Far:</strong><br><br>
+                • Questions Solved: <strong>${state.solved}</strong><br>
+                • Average Score: <strong>${avg}/10</strong><br>
+                • Current Question: <strong>${state.currentQuestionIndex + 1} of ${getQuestions().length}</strong><br><br>
+                ${state.solved > 0 ? "🔥 You're doing great! Keep it up!" : "Start solving questions to track your progress!"}
+            </div>
+        `,
+            true,
+          );
+        });
+      }
+
+      // =============================================
+      // UPDATE PROGRESS UI
+      // =============================================
+
+      function updateProgress() {
+        const qs = getQuestions();
+        const total = qs.length;
+        const pct = Math.round((state.solved / total) * 100);
+        const avg =
+          state.scores.length > 0
+            ? (
+                state.scores.reduce((a, b) => a + b, 0) / state.scores.length
+              ).toFixed(1)
+            : "—";
+        const success = state.scores.filter((s) => s >= 7).length;
+        const successRate =
+          state.scores.length > 0
+            ? Math.round((success / state.scores.length) * 100) + "%"
+            : "—";
+
+        document.getElementById("solvedCount").textContent = state.solved;
+        document.getElementById("avgScore").textContent = avg;
+        document.getElementById("successRate").textContent = successRate;
+        document.getElementById("progressPct").textContent = pct + "%";
+        document.getElementById("overallBar").style.width = pct + "%";
+        document.getElementById("progressLabel").textContent =
+          `${state.solved} of ${total} questions`;
+
+        renderQuestionList();
+      }
+
+      // =============================================
+      // CHANGE COMPANY / ROLE
+      // =============================================
+
+      function changeCompany(company) {
+        state.company = company;
+        state.currentQuestionIndex = 0;
+        state.phase = "welcome";
+        renderQuestionList();
+
+        const companyNames = {
+          google: "Google",
+          meta: "Meta",
+          amazon: "Amazon",
+          netflix: "Netflix",
+          apple: "Apple",
+          microsoft: "Microsoft",
+        };
+
+        botRespond(() => {
+          addMessage(
+            "bot",
+            `
+            <div>
+                Switched to <strong>${companyNames[company]}</strong> interview prep! 🎯<br><br>
+                I've loaded the latest questions based on real ${companyNames[company]} interviews. Ready to start?
+            </div>
+        `,
+            true,
+          );
+        }, 500);
+      }
+
+      function changeRole(role) {
+        state.role = role;
+        renderQuestionList();
+      }
+
+      // =============================================
+      // RESET
+      // =============================================
+
+      function resetChat() {
+        document.getElementById("chatMessages").innerHTML = "";
+        state = {
+          ...state,
+          phase: "welcome",
+          currentQuestionIndex: 0,
+          solved: 0,
+          scores: [],
+          currentQuestion: null,
+        };
+        updateProgress();
+        showWelcome();
+      }
+
+      // =============================================
+      // SEND MESSAGE
+      // =============================================
+
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage("user", text);
+        input.value = "";
+        handleInput(text);
+      }
+
+      function quickSend(text) {
+        addMessage("user", text);
+        handleInput(text);
+      }
+
+      function handleKeyPress(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      }
+
+      // =============================================
+      // ADD TO SLACK
+      // =============================================
+
+      function addToSlack() {
+        const clientId = window.SLACK_CLIENT_ID || "YOUR_CLIENT_ID";
+        const redirectUri = encodeURIComponent(
+          window.SLACK_REDIRECT_URI ||
+            window.location.origin + "/slack/oauth/callback",
+        );
+        const scope =
+          "app_mentions:read,chat:write,commands,im:write,im:read,users:read";
+        const url = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=${scope}&redirect_uri=${redirectUri}`;
+        window.open(url, "_blank");
+      }
+
+      // =============================================
+      // INIT
+      // =============================================
+
+      renderQuestionList();
+      showWelcome();
+    </script>
+  </body>
+</html>
